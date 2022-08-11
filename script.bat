@@ -1,0 +1,1 @@
+python main.py --file_name_device Device_spec --file_name_round FL_output --file_name_graph FL_Accuracy_graph --edge_num 2 --model_size 20 --server_speed 2 --max_edge_speed 10 --edge_data 10 --max_learning_agent_speed 20 --max_learning_agent_num 2
