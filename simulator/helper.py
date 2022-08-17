@@ -1,28 +1,63 @@
 import random
 import sys
 
-def aggregation(list):
-    # server에서 aggregation
-    random_sample_num = random.randint(1,len(list))
-    sample_device_name = random.sample(list, random_sample_num)
-    aggregation_delay = 5
-    aggregation_time = len(sample_device_name) * aggregation_delay
-    print(f'  참여 device : {sample_device_name}')
-    print(f'  aggregation_delay : {aggregation_delay}')
-    print(f'  aggregation_time : {aggregation_time}')
-    return aggregation_time
-
 def random_integer(start,end):
     return random.randint(start, end)
 
-def make_input():
-    # 입력 함수
-    print('입력 내용 : global model size,server speed,edge speed, learning agent speed')
-    n = list(map(int, sys.stdin.readline().split(sep=',')))
-    global_model = n[0]
-    server_speed = n[1]
-    edge_speed = n[2]
-    learning_agent_speed = n[3]
-    print(n[0])
+def model(model, size=None):
+    if model=="MobileNet_V2":
+        size = 14
 
+    elif model=="Inception_V3":
+        size = 95
+
+    elif model=="Vgg19":
+        size = 549
+
+    elif model=="SRGAN":
+        size = 6.1
+
+    elif model=="mymodel":
+        size = size
+
+    return size
+
+def dataset(dataset, volume=None, imgs=None, size=None):
+    if dataset=="MNIST":
+        volume = 66.6
+        imgs = 60000
+        size = (28,28,1)
+
+    elif dataset=="CIFAR10":
+        volume = 356.7
+        imgs = 50000
+        size = (32,32,3)
+
+    elif dataset=="CelebA":
+        volume = 1400
+        imgs = 202599
+        size = (218,178,3)
+
+    elif dataset=="mydataset":
+        volume = volume
+        imgs = imgs
+        size = tuple(size)
+
+    return (volume, imgs, size)
+
+def communication(comm, speed=None):
+    if comm=="5G":
+        speed = 800
+    elif comm=="LTE":
+        speed = 150
+    elif comm=="Wifi":
+        speed = 400
+    elif comm=="lan_1G":
+        speed = 1000
+    elif comm=="lan_500M":
+        speed = 500
+    elif comm=="mycomm":
+        speed = speed
+
+    return speed
 

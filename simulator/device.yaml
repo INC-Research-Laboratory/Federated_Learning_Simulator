@@ -1,0 +1,87 @@
+GPU:
+  NVIDIA TITAN RTX:
+    MobileNet_V2: 0.58
+    Inception_V3: 2.25
+    Vgg19: 7.3
+    SRGAN: 7.1
+  Geforce RTX 2080 Ti:
+    MobileNet_V2: 0.66
+    Inception_V3: 2.25
+    Vgg19: 8.3
+    SRGAN: 8.4
+  Geforce GTX 1080 Ti:
+    MobileNet_V2: 0.96
+    Inception_V3: 3.1
+    Vgg19: 11.0
+    SRGAN: 10.2
+  Geforce RTX 2080 Super:
+    MobileNet_V2: 0.96
+    Inception_V3: 3.55
+    Vgg19: 10.8
+    SRGAN: 11.3
+
+SoC:
+  Google Tensor:
+    MobileNet_V2: 2.0
+    Inception_V3: 8.3
+    Vgg19: 32
+    SRGAN: 37
+  HiSilicon Kirin 9000:
+    MobileNet_V2: 3.2
+    Inception_V3: 8.9
+    Vgg19: 18
+    SRGAN: 23
+  Snapdragon 888:
+    MobileNet_V2: 6.7
+    Inception_V3: 29
+    Vgg19: 60
+    SRGAN: 70
+  Exynos 2100:
+    MobileNet_V2: 4.2
+    Inception_V3: 38
+    Vgg19: 57
+    SRGAN: 58
+
+Phone:
+  Google Pixel6 Pro:
+    MobileNet_V2: 2.1
+    Inception_V3: 8.6
+    Vgg19: 33
+    SRGAN: 41
+  Huawei Mate 40 Pro:
+    MobileNet_V2: 3.2
+    Inception_V3: 9.1
+    Vgg19: 18
+    SRGAN: 24
+  LG V70:
+    MobileNet_V2: 9
+    Inception_V3: 31
+    Vgg19: 63
+    SRGAN: 76
+  Samsung S21 Ultra:
+    MobileNet_V2: 4.2
+    Inception_V3: 38
+    Vgg19: 57
+    SRGAN: 58
+
+IoT:
+  Qualcomm QCS605:
+    MobileNet_V2: 11
+    Inception_V3: 133
+    Vgg19: 296
+    SRGAN: 661
+  Synaptics Video Smart VS680:
+    MobileNet_V2: 90
+    Inception_V3: 975
+    Vgg19: 3524
+    SRGAN: 2622
+  Media Tek i500:
+    MobileNet_V2: 56
+    Inception_V3: 309
+    Vgg19: 1204
+    SRGAN: 1495
+  Amlogic A311D:
+    MobileNet_V2: 83
+    Inception_V3: 856
+    Vgg19: 4352
+    SRGAN: 3428
