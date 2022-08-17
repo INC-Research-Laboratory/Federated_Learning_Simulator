@@ -1,7 +1,6 @@
 # Federated Learning Simulator _ Korean ver
 ## Project Purpose 
 
-----
 논문 `학습 에이전트를 고려한 연합학습 시뮬레이터 고안`에서 제안한 시뮬레이터로 자세한 내용은 논문을 참고하면 된다.  
 
 최근 4차산업혁명으로 인해 인공지능, 사물인터넷 분야에 많은 관심이 모이고 있다. 
@@ -35,12 +34,10 @@
 
 ## Requirements
 
----
 see `requirements.txt`
 
 ## Configurations
 
----
 See `shell script`
 - parameters
   - file_name_device
@@ -79,7 +76,6 @@ See `shell script`
 
 ## File
 
----
 ### device.py
 
 ### helper.py
@@ -88,7 +84,6 @@ See `shell script`
 
 ## Run
 
----
     - move to `pkg` folder
     ```
     main.py --edge_num 3 --round_num 4 --model_size 20 --server_speed 10 --max_edge_speed 10 --edge_data 3 --max_learning_agent_speed 20 --max_learning_agent_num 1
@@ -96,7 +91,6 @@ See `shell script`
 
 ## Results
 
----
 
 
 
