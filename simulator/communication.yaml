@@ -1,0 +1,17 @@
+communication:
+  5G:
+    throughput: 800
+    unit: Mbps
+  LTE:
+    throughput: 150
+    unit: Mbps
+  WIFI:
+    throughput: 400
+    unit: Mbps
+  1Gbps:
+    throughput: 1000
+    unit: Mbps
+  500Mbps:
+    throughput: 500
+    unit: Mbps
+
