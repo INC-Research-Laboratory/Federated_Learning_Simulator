@@ -15,7 +15,7 @@ parser.add_argument("--file_name_round", type=str, default="FL_output", help="na
 parser.add_argument("--file_name_graph", type=str, default="FL_accuracy_Graph", help="name of graph png file")
 # Parameter
 parser.add_argument("--edge_num", type=int, default="3", help="number of edge devices")
-parser.add_argument("--round_num", type=int, default="3", help="number of rounds")
+parser.add_argument("--round_num", type=int, default="5", help="number of rounds")
 # parser.add_argument("--model", type=str, default=None, help="global model name")
 parser.add_argument("--model", type=str, default="MobileNet_V2", help="global model name") # fix
 parser.add_argument("--model_size", type=int, default=None, help="custom model size")
@@ -31,17 +31,17 @@ parser.add_argument("--server_comm", type=str, default="LTE", help="server commu
 # parser.add_argument("--client_comm", nargs='+', type=str, default=None, help="edge device communication method")
 parser.add_argument("--client_comm", nargs='+', type=str, default=["LTE", "5G"], help="edge device communication method") # fix
 # parser.add_argument("--l_agent_comm", type=str, default=None, help="learning agent communication method")
-parser.add_argument("--l_agent_comm", nargs='+', type=str, default=["LTE", "5G", "Wifi", "lan_1G"], help="learning agent communication method")
+parser.add_argument("--l_agent_comm", nargs='+', type=str, default=["LTE", "5G", "WIFI", "1Gbps"], help="learning agent communication method")
 # parser.add_argument("--comm_speed", type=int, default=None, help="custom communication speed")
 parser.add_argument("--comm_speed", type=int, default=10, help="custom communication speed") # fix
 
-parser.add_argument("--l_agent_num", type=int, default=2, help="number of learning agent")
+parser.add_argument("--l_agent_num", type=int, default=3, help="number of maximum learning agent")
 opt = parser.parse_args()
 print(opt)
 
 # device 목록 로드
-with open('device.yaml') as f:
-    device_spec = yaml.load(f, Loader=yaml.FullLoader)
+with open('device.yaml') as device_yaml:
+    device_spec = yaml.load(device_yaml, Loader=yaml.FullLoader)
     gpu = device_spec['GPU']
     soc = device_spec['SoC']
     phone = device_spec['Phone']
@@ -54,18 +54,55 @@ agent_list = list(gpu.keys()) + list(soc.keys()) + list(iot.keys())
 # print(device_spec['GPU'].keys()) # GPU 모델명만 출력
 # print(device_spec['GPU']['NVIDIA TITAN RTX'].keys()) # NVIDIA TITAN RTX 학습 모델명만 출력
 
+# 통신 목록 로드
+with open('communication.yaml') as comm_yaml:
+    comm_list = yaml.load(comm_yaml, Loader=yaml.FullLoader)
+    # five_g = comm_list['communication']['5G']
+    # lte = comm_list['communication']['LTE']
+    # wifi = comm_list['communication']['WIFI']
+    # one_gbps = comm_list['communication']['1Gbps']
+    # five_hun_mbps = comm_list['communication']['500Mbps']
+    server_comm = comm_list['communication'][opt.server_comm]
+    cl_list = []
+    la_list = []
+    for cl in opt.client_comm:
+        # cl_list[cl] = comm_list['communication'][cl]
+        cl_list.append((cl,comm_list['communication'][cl]))
+    for ag in opt.l_agent_comm:
+        # la_list[ag] = comm_list['communication'][ag]
+        la_list.append((ag,comm_list['communication'][ag]))
+
+# print(cl_list['LTE'])
+print(cl_list[0][0])
+print(cl_list[0][1]['throughput'])
+print(len(cl_list))
+# print(la_list['1Gbps'])
+# print(la_list['1Gbps']['throughput'])
+# print(len(cl_list))
+
 ### Device Spec
 ## 1. Server
 # 모델 설정 : Mobilenet, Inception, Vgg, SRGAN
 # 통신 설정 : LTE, 5G, 유선5M, 유선1G
+# model 목록 로드
+with open('model.yaml') as model_yaml:
+    model_list = yaml.load(model_yaml, Loader=yaml.FullLoader)
+    model_spec = model_list['model'][opt.model]
+    model_size = model_spec['size']
 model_name = opt.model
-model = helper.model(opt.model, opt.model_size)
-server_comm = helper.communication(opt.server_comm, opt.comm_speed)
-global_model = device.server(model, server_comm)
+print(model_name)
+print(model_spec)
+print(model_spec['size'])
+# model = helper.model(opt.model, opt.model_size)
+# server_comm = helper.communication(opt.server_comm, opt.comm_speed)
+# global_model = device.server(model, server_comm)
+global_model = device.server(model_size,server_comm['throughput'])
+
 # server dataframe
 df_global = global_model.df_global(global_model.item())
+print(df_global)
 
-## 2. Device (Client)
+## 2. Device (Client) (comm : 순서대로 -> 무작위)
 # 모델 : server에서 보낸 모델
 # 통신 설정 : LTE, 5G, 유선5M, 유선1G
 # 로컬 데이터섯 : MNIST, CIFAR10, CelebA
@@ -73,15 +110,27 @@ df_global = global_model.df_global(global_model.item())
 client_spec = []
 client_name = []
 for i in range(opt.edge_num):
-    # 클라이언트 통신 설정 : 입력한 순서대로 기입한 후 입력이 없으면 고정 값으로 지정
-    if i+1 > len(opt.client_comm) :
-        client_comm = helper.communication('mycomm', opt.comm_speed)
+    # 클라이언트 통신 설정 : 입력한 순서대로 기입한 후 입력이 없으면 랜덤으로 지정
+    if i+1 > len(cl_list) :
+        # client_comm = helper.communication('mycomm', opt.comm_speed)
+        client_comm_spec = random.sample(cl_list,1)
+        client_comm = client_comm_spec[0][1]['throughput']
     else :
-        client_comm = helper.communication(opt.client_comm[i], opt.comm_speed)
+        client_comm_spec = cl_list[i]
+        client_comm = client_comm_spec[1]['throughput']
 
     # local dataset 설정 : 입력한 리스트에서 랜덤으로 불러옴
-    data = random.sample(opt.dataset, 1)[0]
-    dataset = helper.dataset(str(data), opt.dataset_vol, opt.dataset_imgs, opt.dataset_size)
+    # dataset 목록 로드
+    with open('dataset.yaml') as dataset_yaml:
+        dataset_list = yaml.load(dataset_yaml, Loader=yaml.FullLoader)
+        data = random.sample(opt.dataset, 1)[0]
+        mnist = dataset_list['dataset']['MNIST']
+        cifar10 = dataset_list['dataset']['CIFAR10']
+        celeba = dataset_list['dataset']['CelebA']
+        dataset_spec = dataset_list['dataset'][data]
+        dataset_size = dataset_spec['volume']
+        print('dataset',dataset_size)
+    # dataset = helper.dataset(str(data), opt.dataset_vol, opt.dataset_imgs, opt.dataset_size)
 
     # print(f'통신속도:{client_comm}')
     # print(f'데이터셋:{data}')
@@ -105,23 +154,22 @@ for i in range(opt.edge_num):
     # print(f'장치:{dev}')
     # print(f'이미지 처리 성능:{compute_rate}')
 
-    client = device.edge(model, client_comm, dataset[0], compute_rate)
+    client = device.edge(model_size, client_comm, dataset_size, compute_rate)
     client_name.append('Client'+str(i+1))
     client_spec.append(client.item())
 df_edge = client.df_edge(client_spec,client_name)
 
-## 3. Learning agent
+## 3. Learning agent (comm : 무작위)
 agent_spec = []
 agent_name = []
 
 for index, name in enumerate(client_name):
     dataset = df_edge.at[name, 'data']
-    for agent_num in range(opt.l_agent_num):
-        if agent_num + 1 > len(opt.l_agent_comm):
-            l_comm = helper.communication('mycomm', opt.comm_speed)
-        else:
-            ran_comm = random.sample(opt.l_agent_comm,1)[0]
-            l_comm = helper.communication(ran_comm, opt.comm_speed)
+    l_agent_num = random.randrange(0, opt.l_agent_num)
+    for agent_num in range(l_agent_num):
+        # 학습에이전트 통신 설정 : 입력한 것들 중 랜덤으로 지정
+        l_comm_spec = random.sample(la_list,1)
+        l_comm = l_comm_spec[0][1]['throughput']
 
         l_aent = random.sample(agent_list,1)[0]
         if l_aent in list(gpu.keys()):
@@ -133,7 +181,7 @@ for index, name in enumerate(client_name):
         elif l_aent in list(iot.keys()):
             category = iot[l_aent]
         compute_rate = category[model_name]
-        agent = device.learning_agent(model, l_comm, dataset, compute_rate)
+        agent = device.learning_agent(model_size, l_comm, dataset, compute_rate)
         agent_name.append(name + '_agent' + str(agent_num + 1))
         agent_spec.append(agent.item())
 df_agent = agent.df_agent(agent_spec, agent_name)
@@ -141,6 +189,7 @@ df_agent = agent.df_agent(agent_spec, agent_name)
 df = pd.concat([df_global, df_edge, df_agent], axis=0)
 df.to_csv('../' + opt.file_name_device + '.csv')
 print(df)
+
 ### Round
 last_accuracy_list = []
 old_accuracy_list = []
@@ -178,7 +227,7 @@ for round in range(1, opt.round_num+1):
         for device_s in device_name_sample:
             if device_s == device_g:
                 target_device.append([g + 1, device_s])
-    print(f'     선택된 디바이스: {device_name_sample}')
+    # print(f'     선택된 디바이스: {device_name_sample}')
     # print(f'     선택된 디바이스: {target_device}')
 
     ## 2. deploy : global model을 edge device에 전송 (소요 시간 = deploy_time)
@@ -220,10 +269,10 @@ for round in range(1, opt.round_num+1):
 
                 if use_status == 1:  # learning agent가 사용 가능한 경우
                     if la_time == 0:  # 사용가능한 learning agent가 없었던 경우
-                        la_time = df.loc[z].time + df.loc[z].learning_time
+                        la_time = df.loc[z].time + df.loc[z].learning_time + df.loc[target_device_name].time
                         la = z
                     else:  # 이전에 사용가능한 learning agent가 있던 경우
-                        temp_la_time = df.loc[z].time + df.loc[z].learning_time
+                        temp_la_time = df.loc[z].time + df.loc[z].learning_time + df.loc[target_device_name].time
                         if la_time > temp_la_time:
                             la_time = temp_la_time
                             la = z
@@ -234,6 +283,9 @@ for round in range(1, opt.round_num+1):
         print('       * la_time : (learning agent) send time + learning time')
         print(f'       edge_time:{edge_time}')
         print(f'       learning agent:{la}, la_time:{la_time}')
+
+        # edge device 소요시간 : 학습시간 + 서버로 전송시간
+        # 학습에이전트 소요시간 : 학습에이전트로 전송시간 + 학습시간 + 서버로 전송시간
         if edge_time <= la_time or la_time == 0:
             use_device = target_device_name
             send_time = edge_time
@@ -249,9 +301,11 @@ for round in range(1, opt.round_num+1):
         # accuracy = (data size * iteration) / f(=적절한 값)
         # f = data size + iteration
         f = df.loc[use_device].data + iteration
+        weight = round*10
         # round1 : 이전 round의 accuracy가 존재하지 않음
         if round == 1:
-            accuracy = df.loc[use_device].data * iteration // f
+            accuracy = df.loc[use_device].data * iteration / f
+            # accuracy = np.log(df.loc[use_device].data * iteration / f)
             accuracy_list.append(accuracy)
             # print(df.loc[use_device].data_size)
             # print(iteration)
@@ -260,7 +314,8 @@ for round in range(1, opt.round_num+1):
         # round2 이상 : 이전 round의 accuracy를 고려하여 accuracy 계산
         else:
             last_aggre_acc = aggre_acc_list[-1]
-            accuracy = (df.loc[use_device].data * iteration // f) + last_aggre_acc
+            accuracy = (df.loc[use_device].data * iteration / f / weight) + last_aggre_acc
+            # accuracy = np.log((df.loc[use_device].data * iteration / f) + last_aggre_acc)
             accuracy_list.append(accuracy)
         #     print('last aggre : ', last_aggre_acc)
         # print(df.loc[use_device].data_size)
@@ -303,9 +358,13 @@ for round in range(1, opt.round_num+1):
     # accuracy aggregation = sum(device accuracy) // aggregation f(=적당한 값)
     aggre_f = 3 * len(client_name) - len(device_name_sample)  # device 개수가 많을수록 높은 accuracy가 계산되도록
     if round == 1:
-        aggre_acc = sum(accuracy_list) // aggre_f
+        aggre_acc = sum(accuracy_list) / aggre_f / weight
+        # aggre_acc = sum(accuracy_list) / aggre_f / (opt.round_num*1.7)
     else:
-        aggre_acc = sum(accuracy_list) // aggre_f + aggre_acc_list[-1]
+        aggre_acc = (sum(accuracy_list) / aggre_f)/ weight + aggre_acc_list[-1]
+        # if aggre_acc > 1:
+        #     aggre_acc = 0.99999
+        # aggre_acc = sum(accuracy_list) / aggre_f / (opt.round_num*1.7) + aggre_acc_list[-1]
     aggre_acc_list.append(aggre_acc)
     print(f'     aggre_acc: {aggre_acc}')
     # print('aggre_acc_list: ', aggre_acc_list)
@@ -335,7 +394,7 @@ y = list(df_round['aggregation accuracy'])
 plt.plot(X, y, linestyle='dashed', marker='.', color='violet')
 plt.xlabel('Round')
 plt.ylabel('Accuracy')
-# plt.show()
+plt.show()
 plt.savefig('../' + opt.file_name_graph + '.png')
 
 
@@ -345,4 +404,3 @@ plt.savefig('../' + opt.file_name_graph + '.png')
 #     print(df_edge)
 #     print(df_agent)
 #     print(df)
-
