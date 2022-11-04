@@ -1,0 +1,16 @@
+dataset:
+  MNIST:
+    volume: 21
+    unit: MB
+    imgs: 60000
+    size: (28,28,1)
+  CIFAR10:
+    volume: 132.4
+    unit: MB
+    imgs: 50000
+    size: (32,32,3)
+  CelebA:
+    volume: 1620
+    unit: MB
+    imgs: 202599
+    size: (218,178,3)

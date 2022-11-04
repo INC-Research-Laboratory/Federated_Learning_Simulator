@@ -1,0 +1,14 @@
+model:
+  MobileNet_V2:
+    size: 14
+    unit: MB
+  Inception_V3:
+    size: 95.3
+    unit: MB
+  U-Net:
+    size: 31.1
+    unit: MB
+  SRGAN:
+    size: 6.1
+    unit: MB
+

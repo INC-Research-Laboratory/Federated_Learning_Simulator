@@ -1,0 +1,85 @@
+# Desktop / Laptop
+GPU:
+  NVIDIA TITAN RTX:
+    MobileNet_V2: 0.7
+    Inception_V3: 2.25
+    U-Net: 38.5
+    SRGAN: 8.3
+  Geforce RTX 2080 Ti:
+    MobileNet_V2: 0.66
+    Inception_V3: 2.25
+    U-Net: 39.75
+    SRGAN: 8.4
+  Geforce GTX 1080 laptop:
+    MobileNet_V2: 1.38
+    Inception_V3: 4.2
+    U-Net: 77.5
+    SRGAN: 14.9
+  Geforce RTX 2070 laptop:
+    MobileNet_V2: 1.72
+    Inception_V3: 5.7
+    U-Net: 75.75
+    SRGAN: 17.9
+
+# Smart Phone / Tablet
+SoC:
+  Snapdragon 8 Gen 1:
+    MobileNet_V2: 1.5
+    Inception_V3: 5.1
+    U-Net: 41
+    SRGAN: 60
+  Dimensity 8100-Max:
+    MobileNet_V2: 3
+    Inception_V3: 16
+    U-Net: 69
+    SRGAN: 138
+  Snapdragon 888:
+    MobileNet_V2: 6.8
+    Inception_V3: 28
+    U-Net: 169
+    SRGAN: 230
+  Apple A15 Bionic:
+    MobileNet_V2: 3.9
+    Inception_V3: 5.9
+    U-Net: 347
+    SRGAN: 167
+  Snapdragon 870:
+    MobileNet_V2: 6.8
+    Inception_V3: 55
+    U-Net: 200
+    SRGAN: 545
+  Unisoc Tiger T618:
+    MobileNet_V2: 73
+    Inception_V3: 326
+    U-Net: 1406
+    SRGAN: 5919
+  Qualcomm QCS605:
+    MobileNet_V2: 11
+    Inception_V3: 133
+    U-Net: 96
+    SRGAN: 661
+  Synaptics Video Smart VS680:
+    MobileNet_V2: 90
+    Inception_V3: 975
+    U-Net: 728
+    SRGAN: 2622
+  Media Tek i500:
+    MobileNet_V2: 56
+    Inception_V3: 309
+    U-Net: 1273
+    SRGAN: 1495
+  Amlogic A311D:
+    MobileNet_V2: 83
+    Inception_V3: 856
+    U-Net: 1280
+    SRGAN: 3428
+  Broadcom BCM2711:
+    MobileNet_V2: 124
+    Inception_V3: 993
+    U-Net: 1764
+    SRGAN: 4452
+  Rockchip RK3288:
+    MobileNet_V2: 145
+    Inception_V3: 1153
+    U-Net: 1602
+    SRGAN: 4147
