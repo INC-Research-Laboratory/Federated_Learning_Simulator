@@ -78,4 +78,4 @@ main 코드에 사용하는 함수 정의
 - situation_script  
 ![simulation](./asset/FL_accuracy_Graph.png)
 - accuracy_script  
-![simulation](./asset\Predict_accuracy.png)
+![simulation](./asset/Predict_accuracy.png)
