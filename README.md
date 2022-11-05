@@ -54,10 +54,11 @@ See `batch file` or `shell script`
 ## File
 
 ### device.py
-
+server, client, learning agent의 성능, 통신방법, 데이터셋 등을 선언
 ### helper.py
- 
+main 코드에 사용하는 함수 정의
 ### main.py
+연합학습 시뮬레이션이 작동
 
 ## Run
 - batch
@@ -74,7 +75,7 @@ See `batch file` or `shell script`
     ```
 
 ## Results
-
-
-
-
+- situation_script  
+![simulation](C:\Users\hyeonbae\PycharmProjects\Federated_Learning_Simulator\asset\FL_accuracy_Graph.png)
+- accuracy_script  
+![simulation](C:\Users\hyeonbae\PycharmProjects\Federated_Learning_Simulator\asset\Predict_accuracy.png)
