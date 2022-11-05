@@ -76,6 +76,6 @@ main 코드에 사용하는 함수 정의
 
 ## Results
 - situation_script  
-![simulation](C:\Users\hyeonbae\PycharmProjects\Federated_Learning_Simulator\asset\FL_accuracy_Graph.png)
+![simulation](./asset/FL_accuracy_Graph.png)
 - accuracy_script  
-![simulation](C:\Users\hyeonbae\PycharmProjects\Federated_Learning_Simulator\asset\Predict_accuracy.png)
+![simulation](./asset\Predict_accuracy.png)
