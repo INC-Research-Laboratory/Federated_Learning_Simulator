@@ -20,20 +20,11 @@ parser.add_argument("--file_name_graph", type=str, default="./output_basic/FL_ac
 # Parameter
 parser.add_argument("--edge_num", type=int, default="3", help="number of edge devices")
 parser.add_argument("--round_num", type=int, default="20", help="number of rounds")
-
-# parser.add_argument("--model", type=str, default=None, help="global model name")
-parser.add_argument("--model", type=str, default="MobileNet_V2", help="global model name") # fix
-
-# parser.add_argument("--dataset", nargs='+', type=str, default=None, help="dataset name(MNIST,CIFAR10,CelebA")
-parser.add_argument("--dataset", nargs='+', type=str, default=["MNIST","CIFAR10","CelebA"], help="dataset name(MNIST,CIFAR10,CelebA") # fix
-
-# parser.add_argument("--server_comm", type=str, default=None, help="server communication method")
-parser.add_argument("--server_comm", type=str, default="1Gbps", help="server communication method") # fix
-# parser.add_argument("--client_comm", nargs='+', type=str, default=None, help="edge device communication method")
-parser.add_argument("--client_comm", nargs='+', type=str, default=["LTE", "5G"], help="edge device communication method") # fix
-# parser.add_argument("--l_agent_comm", type=str, default=None, help="learning agent communication method")
+parser.add_argument("--model", type=str, default="MobileNet_V2", help="global model name")
+parser.add_argument("--dataset", nargs='+', type=str, default=["MNIST","CIFAR10","CelebA"], help="dataset name(MNIST,CIFAR10,CelebA")
+parser.add_argument("--server_comm", type=str, default="1Gbps", help="server communication method")
+parser.add_argument("--client_comm", nargs='+', type=str, default=["LTE", "5G"], help="edge device communication method")
 parser.add_argument("--l_agent_comm", nargs='+', type=str, default=["LTE", "5G", "WIFI", "1Gbps"], help="learning agent communication method")
-
 parser.add_argument("--l_agent_num", type=int, default=3, help="number of maximum learning agent")
 
 parser.add_argument("--a", type=float, default=0, help="minimum accuracy")
@@ -43,12 +34,10 @@ parser.add_argument("--q", type=float, default=0.0001, help="weight of participa
 
 parser.add_argument("--accuracy", nargs='+', type=float, default=None)
 parser.add_argument("--predict_round", type=int, default=None)
-# parser.add_argument("--accuracy", nargs='+', type=float, default=[0.00264, 0.09581, 0.09944,0.13112, 0.23518])
-# parser.add_argument("--predict_round", type=int, default=20)
+
 opt = parser.parse_args()
 print(opt)
 
-random.seed(40)
 os.makedirs(opt.file_root, exist_ok = True)
 
 def sim_sigmoid(x,a,b):
@@ -67,7 +56,6 @@ def custom_predict(target):
     b_range = np.arange(0,1,0.001)      # 최대 정확도 탐색
     w_range = np.arange(0.001,3,0.001)  # 정확도 증가량 탐색
 
-    print('find')
     for b in tqdm(b_range, desc='Start predict accuracy...'):
         for w in w_range:
             predict = []
@@ -318,8 +306,7 @@ for r in range(1, opt.round_num+1):
     print(f'        -> Learning time(ms) = learning time(iter 1) * iteration')
     print(f'        -> Device(Edge/Learning Agent) to Server = Learning time(s) + send time(s)')
     print(f'        ---> Edge device to Server : learning time(s) + (edge device) send time(s)')
-    print(
-        f'        ---> Learning agent to Server : (edge device) send time(s) + learning time(s) + (learning agent) send time(s)')
+    print(f'        ---> Learning agent to Server : (edge device) send time(s) + learning time(s) + (learning agent) send time(s)')
 
     # for index_s, sample in enumerate(target_device): # 랜덤하게 선택한 device의 인덱스와 이름
     for sample in target_device:
@@ -359,15 +346,14 @@ for r in range(1, opt.round_num+1):
                             la = z
         # print('index:', df_index) # 전체 device
         # print('find: ', find)     # 사용 가능한 learning agent
-        print(df.loc[target_device_name].Dataset_Size)
+        # print(df.loc[target_device_name].Dataset_Size)
         round_dataset.append(df.loc[target_device_name].Dataset_Size)
         round_iteration.append(iteration)
 
         # learning agent가 없는 경우 : 학습 + server 전송
         edge_time = df.loc[target_device_name].Learning_Time * iteration / 1000 + df.loc[target_device_name].Transmission_Delay
         print(f'        * {sample[1]} iteration: {iteration}')
-        print(
-            f'            Edge device to Server : {df.loc[target_device_name].Learning_Time * iteration / 1000:.3f} + {df.loc[target_device_name].Transmission_Delay:.3f} = {edge_time:.3f} s')
+        print(f'            Edge device to Server : {df.loc[target_device_name].Learning_Time * iteration / 1000:.3f} + {df.loc[target_device_name].Transmission_Delay:.3f} = {edge_time:.3f} s')
         print(f'            Learning Agent to Server : {la}, la_time:{la_time:.3f} s')
 
         # edge device 소요시간 : 학습시간 + 서버로 전송시간
@@ -407,8 +393,8 @@ for r in range(1, opt.round_num+1):
     print(f'        Total Round time = {total_time:.3f} s')
 
     # accuracy aggregation
-    print('round_dataset:', round_dataset)
-    print('round_iteration:', round_iteration)
+    # print('round_dataset:', round_dataset)
+    # print('round_iteration:', round_iteration)
 
     round_dataset = np.array(round_dataset) #/ 10000
     round_iteration = np.array(round_iteration) * opt.p
@@ -419,11 +405,11 @@ for r in range(1, opt.round_num+1):
     x_weight_sum = np.sum(x) * ((len(device_name_sample)*opt.q)/len(client_name))
     # print('target:', len(device_name_sample))
     # print('total:', len(client_name))
-    print('x_sum:', x_weight_sum)
+    # print('x_sum:', x_weight_sum)
     x_total = x_total + x_weight_sum
-    print('x_total:', x_total)
+    # print('x_total:', x_total)
     aggre_acc = sim_sigmoid(x_total, min_acc, max_acc)
-    print(aggre_acc)
+    # print(aggre_acc)
 
     aggre_acc_list.append(aggre_acc)
     print(f'        Aggregation accuracy: {aggre_acc:.3f}')
@@ -455,9 +441,9 @@ for temp in total_time_item:
     X_time = round(x_time,2)
     X_list.append(X_time)
 
-print('total_time',total_time_item)
-print('X_list', X_list)
-print(X_list[0].dtype)
+# print('total_time',total_time_item)
+# print('X_list', X_list)
+# print(X_list[0].dtype)
 
 X = np.arange(1,opt.round_num+1,1)
 y = aggre_acc_list
