@@ -4,7 +4,7 @@
 논문 `학습 에이전트를 고려한 연합학습 시뮬레이터 고안`에서 제안한 시뮬레이터로 자세한 내용은 논문을 참고하면 된다.
 
 ## Requirements
-
+Python 3.9 version  
 see `requirements.txt`
 
 ## Configurations
@@ -52,22 +52,37 @@ See `batch file` or `shell script`
     - 예측하고 싶은 round
 
 ## File
-
-### device.py
+### `yaml` folder
+- 사용자의 상황에 맞는 값을 추가하여 활용 가능
+#### communication.yaml
+서버, 클라이언트, Learning Agent의 통신 수단 실측값  
+5G, LTE, WIFI, Ethernet 1Gbps, Ethernet 500Mbps
+#### dataset.yaml
+로컬학습에 사용되는 데이터셋  
+MNIST, CIFAR10, CelebA
+#### device.yaml
+`model.yaml`에 입력된 글로벌모델에 해당하는 클라이언트와 Learning Agent의 학습 성능  
+GPU(Desktop/Laptop), SoC(SmartPhone/Tablet)
+#### model
+글로벌모델로 사용할 수 있는 모델의 크기  
+MobileNet V2, Inception V3, U-Net, SRGAN
+### `code` folder
+#### device.py
 server, client, learning agent의 성능, 통신방법, 데이터셋 등을 선언
-### helper.py
+#### helper.py
 main 코드에 사용하는 함수 정의
-### main.py
+#### main.py
 연합학습 시뮬레이션이 작동
 
 ## Run
-- batch
+- move to `scripts` folder
+- batch (for window)
     ``` 
     ### batch
     situation_script.bat
     accuracy_script.bat
     ```
-- shell script
+- shell script (for linux)
     ```
     ### sh
     sh situation_script.sh
