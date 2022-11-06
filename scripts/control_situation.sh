@@ -1,0 +1,17 @@
+python ./code/main.py \
+    --file_root ./output/ \
+    --file_name_device ./output/Device_spec \
+    --file_name_round ./output/FL_output \
+    --file_name_graph ./output/FL_accuracy_Graph \
+    --edge_num 3 \
+    --round_num 20 \
+    --model MobileNet_V2 \
+    --dataset MNIST CIFAR10 CelebA \
+    --server_comm 1Gbps \
+    --client_comm LTE 5G \
+    --l_agent_comm LTE 5G WIFI\
+    --l_agent_num 3 \
+    --a 0 \
+    --b 0.8 \
+    --p 0.02 \
+    --q 0.0001
